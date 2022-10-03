@@ -1,4 +1,4 @@
-const { Loan } = require("../models/loanModels");
+const { Loan , ModifyLoan} = require("../models/loanModels");
 const User  = require("../models/userModels");
 const { findOne } = require("../models/userModels");
 
@@ -58,8 +58,6 @@ exports.acceptLoan = async (req, res) => {
           usersWhoAccept: userID,
         }
       ).exec();
-  
-
       const UpdatedLoan = await Loan.findById(loanID)
       .populate("usersWhoAccept")
       .select('-password -__v ')
@@ -68,5 +66,64 @@ exports.acceptLoan = async (req, res) => {
     } catch (err) {
       res.status(400).send(err);
     }
-  };
+};
   
+exports.modifyLoan = async(req,res)=>{
+  try {
+    const modifierID = req.user._id;
+    // console.log(modifierID)
+    if(!modifierID)
+    {
+      res.status(401).send("Please login")
+    }
+    const loanID = req.params.loanID;
+
+    const loan = await Loan.findById(loanID);
+
+    // console.log(loan)
+
+    if(!loan)
+    {
+      res.status(500).send("Loan with your loan id is not found in database")
+    }
+    const userWhosLoanID = loan.userWhoApplyForLoan;
+    const oldLoanAmount = loan.loanAmount
+    const oldTenure = loan.tenure
+    const oldInterestRate = loan.interestRate
+
+    const modifiedLoanAmount = req.body.modifiedLoanAmount
+    const modifiedTenure = req.body.modifiedTenure
+    const modifiedInterestRate = req.body.modifiedInterestRate
+
+    if(modifiedLoanAmount==oldLoanAmount && 
+      modifiedTenure==oldTenure && 
+      modifiedInterestRate==oldInterestRate
+      )
+    {
+        res.status(200).send("Sorry!! you have not updated anything ;)")
+    }
+    else
+    {
+      const modifiedLoan =  new ModifyLoan({
+        originalLoan:loanID,
+        modifier: modifierID,
+        userWhosLoan: userWhosLoanID,
+        modifiedLoanAmount: modifiedLoanAmount,
+        modifiedTenure: modifiedTenure,
+        modifiedInterestRate: modifiedInterestRate,
+      });
+      console.log(modifiedLoan);
+      await modifiedLoan.save(modifiedLoan).then((data) => {
+        res
+          .status(201)
+          .send(
+            "Modified loan request send successfully !!" 
+          );
+        // res.redirect('/user/login');
+      });
+    }
+  } catch (err) {
+    res.status(500).send("Some error while modifying laon req");
+  }
+
+}

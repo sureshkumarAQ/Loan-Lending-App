@@ -29,19 +29,28 @@ const LoanSchema = new Schema({
   },
 });
 const ModifyLoanSchema = new Schema({
-  modifier: [{ type: Schema.Types.ObjectId, ref: "user" }],
-  user: [{ type: Schema.Types.ObjectId, ref: "user" }],
-
-  modifyLoanAmount: {
+  originalLoan:{
+    type: Schema.Types.ObjectId,
+    ref: "Loan",
+  },
+  modifier: { 
+    type: Schema.Types.ObjectId,
+    ref: "user" 
+  },
+  userWhosLoan: { 
+    type: Schema.Types.ObjectId,
+    ref: "user" 
+  },
+  modifiedLoanAmount: {
     type: Number,
   },
-  modifyTenure: {
+  modifiedTenure: {
     type: String,
   },
-  modifyInterestRate: {
+  modifiedInterestRate: {
     type: Number,
   },
-  acceptanace: {
+  isModifiedLoanAccepted: {
     type: Boolean,
     default: false,
   },
