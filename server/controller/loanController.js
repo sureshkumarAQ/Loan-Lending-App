@@ -1,5 +1,5 @@
 const { Loan , ModifyLoan} = require("../models/loanModels");
-const User  = require("../models/userModels");
+const {User}  = require("../models/userModels");
 const { findOne } = require("../models/userModels");
 
 exports.applyNewLoan = async (req, res) => {
@@ -112,12 +112,12 @@ exports.modifyLoan = async(req,res)=>{
         modifiedTenure: modifiedTenure,
         modifiedInterestRate: modifiedInterestRate,
       });
-      console.log(modifiedLoan);
+      // console.log(modifiedLoan);
       await modifiedLoan.save(modifiedLoan).then((data) => {
         res
           .status(201)
           .send(
-            "Modified loan request send successfully !!" 
+            {"Modified loan request : ":data } 
           );
         // res.redirect('/user/login');
       });
@@ -127,3 +127,33 @@ exports.modifyLoan = async(req,res)=>{
   }
 
 }
+
+exports.acceptModifiedLoanRequest = async(req,res)=>{
+  try {
+    const userID = req.user._id;
+    const loanID = req.params.loanID;
+    const loan = await ModifyLoan.findById(loanID);
+
+    if(!loan)
+    {
+      res.status(404).send("No loan request with this ID")
+    }
+
+    const userWhosLoan = loan.userWhosLoan;
+    console.log(loan);
+
+    //Calculating score based on age and ctc
+    await ModifyLoan.findOneAndUpdate(
+      {
+        _id: loanID,
+      },
+      {
+        isModifiedLoanAccepted: true,
+      }
+    ).exec();
+    res.status(201).send("Loan request accepted successfully ;)");
+  } catch (err) {
+    res.status(400).send(err);
+  }
+}
+

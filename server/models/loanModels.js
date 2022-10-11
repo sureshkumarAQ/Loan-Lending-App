@@ -28,6 +28,7 @@ const LoanSchema = new Schema({
     ref: "user",
   },
 });
+
 const ModifyLoanSchema = new Schema({
   originalLoan:{
     type: Schema.Types.ObjectId,

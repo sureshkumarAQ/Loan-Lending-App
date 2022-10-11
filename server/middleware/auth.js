@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-var User  = require("../models/userModels");
+var {User}  = require("../models/userModels");
 const cookieParser = require("cookie-parser");
 
 const config = process.env;
@@ -14,6 +14,7 @@ const verifyToken = async (req, res, next) => {
   }
   try {
     const decoded = jwt.verify(token, config.JWT_SECRET);
+  
 
     const user = await User.findById(decoded.id);
     // console.log(user)

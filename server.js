@@ -25,7 +25,7 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
 app.use(cookieParser());
 
-// app.use("/uploads", express.static(path.resolve(__dirname, "uploads")));
+app.use("/uploads", express.static(path.resolve(__dirname, "uploads")));
 
 // Load routers
 

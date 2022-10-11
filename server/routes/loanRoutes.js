@@ -6,5 +6,6 @@ const auth = require('../middleware/auth.js')
 route.post("/applyLoan", auth, controller.applyNewLoan);
 route.post("/acceptLoan/:loanID", auth, controller.acceptLoan);
 route.post("/modify/:loanID", auth, controller.modifyLoan);
+route.post("/acceptModifiedLoan/:loanID",auth,controller.acceptModifiedLoanRequest);
 
 module.exports = route;

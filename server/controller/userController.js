@@ -1,4 +1,4 @@
-const User = require("../models/userModels");
+const {User,Docs} = require("../models/userModels");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { findOne } = require("../models/userModels");
@@ -15,7 +15,7 @@ const { findOne } = require("../models/userModels");
     // Calculating initial loan eliginle criteria score(lecs)
   
     // Store all data in user object
-    const user = await new User({
+    const user = new User({
       name: req.body.name,
       password: req.body.password,
       email: req.body.email
@@ -62,7 +62,7 @@ const { findOne } = require("../models/userModels");
       return res.status(406).send({ err: "No account with this email" });
     }
     // Compare password
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(406).send({ err: "Invalid Credentials" });
 
     // zwt create a new tokken
@@ -135,3 +135,102 @@ const { findOne } = require("../models/userModels");
       });
     }
   }
+
+
+  exports.uploadAdhar = async (req, res) => {
+    try {
+      const userID = req.user._id;
+      // console.log(`Your file is :${req.file}`);
+
+      const userdoc = await Docs.findOne({user:userID})
+
+      // console.log(userdoc);
+
+      if(!userdoc)
+      {
+        const newDoc = new Docs({
+          aadhar:req.file,
+          user:userID
+        })
+        await newDoc.save(newDoc).then((data) => {
+          res.status(201).send({"Your Aadhar Card uploaded successfully ":data});
+          // res.redirect('/user/login');
+        });
+      }
+
+      await Docs.findOneAndUpdate({user:userID},{
+        aadhar:req.file
+      }).exec()
+
+      const updatedDocs = await Docs.findOne({user:userID});
+      res.status(201).send({"Your Aadhar Card uploaded successfully ;) ":updatedDocs})
+
+    } catch (error) {
+      res.status(400).send(error.message);
+    }
+  };
+  
+  exports.uploadProfilePhoto = async (req, res) => {
+    try {
+      const userID = req.user._id;
+      // console.log(`Your file is :${req.file}`);
+
+      const userdoc = await Docs.findOne({user:userID})
+
+      console.log(userdoc);
+
+      if(!userdoc)
+      {
+        const newDoc = new Docs({
+          profilePhoto:req.file,
+          user:userID
+        })
+        await newDoc.save(newDoc).then((data) => {
+          res.status(201).send({"Your Aadhar Card uploaded successfully ":data});
+          // res.redirect('/user/login');
+        });
+      }
+
+      await Docs.findOneAndUpdate({user:userID},{
+        profilePhoto:req.file
+      }).exec()
+
+      const updatedDocs = await Docs.findOne({user:userID});
+      res.status(201).send({"Profile Photo upload successfully ;) ":updatedDocs})
+
+    } catch (error) {
+      res.status(400).send(error.message);
+    }
+  };
+  exports.uploadPan = async (req, res) => {
+    try {
+      const userID = req.user._id;
+      // console.log(`Your file is :${req.file}`);
+
+      const userdoc = await Docs.findOne({user:userID})
+
+      console.log(userdoc);
+
+      if(!userdoc)
+      {
+        const newDoc = new Docs({
+          pancard:req.file,
+          user:userID
+        })
+        await newDoc.save(newDoc).then((data) => {
+          res.status(201).send({"Your Pan Card uploaded successfully ":data});
+          // res.redirect('/user/login');
+        });
+      }
+
+      await Docs.findOneAndUpdate({user:userID},{
+        pancard:req.file
+      }).exec()
+
+      const updatedDocs = await Docs.findOne({user:userID});
+      res.status(201).send({"Your Pancard upload successfully ;) ":updatedDocs})
+
+    } catch (error) {
+      res.status(400).send(error.message);
+    }
+  };

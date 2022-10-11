@@ -61,5 +61,20 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+const docSchema = new Schema({
+  profilePhoto: {
+    type: Object,
+  },
+  aadhar: {
+    type: Object,
+  },
+  pancard: {
+    type: Object,
+  },
+  user: { type: Schema.Types.ObjectId, ref: "user" },
+},{ timestamps: true });
+
+
 const User = mongoose.model("user", userSchema);
-module.exports = User;
+const Docs = mongoose.model("docs",docSchema)
+module.exports = {User,Docs};
