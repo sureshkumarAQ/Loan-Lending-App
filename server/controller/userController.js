@@ -2,7 +2,7 @@ const {User,Docs} = require("../models/userModels");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { findOne } = require("../models/userModels");
-  
+
   //Create and save new user
   exports.signUp = async (req, res) => {
     //Validate request
@@ -62,8 +62,10 @@ const { findOne } = require("../models/userModels");
       return res.status(406).send({ err: "No account with this email" });
     }
     // Compare password
-    const isMatch = bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(406).send({ err: "Invalid Credentials" });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+     return res.status(406).send({ err: "Invalid Credentials" });
+
 
     // zwt create a new tokken
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
@@ -71,8 +73,9 @@ const { findOne } = require("../models/userModels");
     user.token = token;
 
     //Store jwt-token in cookie
+    
     res.cookie("jwtoken", token, {
-      expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+      expires: new Date(Date.now() +  24 * 60 * 60 * 1000),
       httpOnly: true,
     });
 

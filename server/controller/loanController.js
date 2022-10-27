@@ -10,11 +10,13 @@ exports.applyNewLoan = async (req, res) => {
       }
   
       const user = await User.findOne(userID);
+
+      // console.log(req.headers)
   
       if (!user) {
-        res.status(400).send("User Not found");
+        res.status(404).send("User Not found");
       }
-      const loan = await new Loan({
+      const loan =  new Loan({
         userWhoApplyForLoan: userID,
         loanAmount: req.body.loanAmount,
         tenure: req.body.tenure,
@@ -80,7 +82,7 @@ exports.modifyLoan = async(req,res)=>{
 
     const loan = await Loan.findById(loanID);
 
-    // console.log(loan)
+    console.log(req.body)
 
     if(!loan)
     {
@@ -112,7 +114,7 @@ exports.modifyLoan = async(req,res)=>{
         modifiedTenure: modifiedTenure,
         modifiedInterestRate: modifiedInterestRate,
       });
-      // console.log(modifiedLoan);
+      console.log(modifiedLoan);
       await modifiedLoan.save(modifiedLoan).then((data) => {
         res
           .status(201)
@@ -154,6 +156,25 @@ exports.acceptModifiedLoanRequest = async(req,res)=>{
     res.status(201).send("Loan request accepted successfully ;)");
   } catch (err) {
     res.status(400).send(err);
+  }
+}
+
+
+exports.getOneLoan = async(req,res)=>{
+  try {
+    const loanID = req.params.loanID;
+
+    const loan = await Loan.findById(loanID).select('-_id -__v');
+
+    // console.log(loan)
+
+    if(!loan)
+    {
+      res.status(500).send("Loan with your loan id is not found in database")
+    }
+    res.status(201).send(loan);
+  } catch (error) {
+    res.status(500).send("Some error");
   }
 }
 

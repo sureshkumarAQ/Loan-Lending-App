@@ -7,7 +7,8 @@ const config = process.env;
 const verifyToken = async (req, res, next) => {
   // Token can be stored in headers and in cookie both
   // For postman both and for browser cookie we use
-  const token = req.headers.jwtoken ;
+  // console.log(req.cookies)
+  const token = req.headers.jwtoken || req.cookies.jwtoken;
 
   if (!token) {
     return res.status(401).send("Pleas login to access this route!!");
