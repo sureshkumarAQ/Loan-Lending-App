@@ -37,6 +37,7 @@ app.use(function(req, res, next) {
 app.use("/", require("./server/routes/routes.js"));
 app.use("/user", require("./server/routes/userRoutes.js"));
 app.use("/loan", require("./server/routes/loanRoutes.js"));
+app.use("/chat", require("./server/routes/chatRoutes.js"));
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
