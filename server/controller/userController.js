@@ -79,10 +79,10 @@ const { findOne } = require("../models/userModels");
       httpOnly: true,
     });
 
-    res.send({token});
+    res.send({token, user});
     // res.redirect("/loan/loanRequests");
   } catch (err) {
-    res.status(500).send("Error while Login");
+    res.status(500).send({"Error while Login ":err});
   }
   };
 
@@ -237,3 +237,15 @@ const { findOne } = require("../models/userModels");
       res.status(400).send(error.message);
     }
   };
+
+  exports.searchUser = async(req,res)=>{
+    // console.log(req.query)
+    //search keyword in name or email , i means case insensetive
+    const keyword = req.query.search?{
+      name:{$regex:req.query.search,$options:"$i"}
+    }:{}
+    // search user form database with keyword except the user who is searching
+    const users = await User.find(keyword).find({_id:{$ne:req.user._id}})
+
+    res.status(200).send(users)
+  }

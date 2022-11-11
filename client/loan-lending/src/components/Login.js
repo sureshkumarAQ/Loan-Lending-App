@@ -31,7 +31,7 @@ const Login = () => {
         else
         {
             try {
-                let token;
+                let userInfo;
                 const config = {
                     headers: {
                         // jwtoken: token,
@@ -44,15 +44,16 @@ const Login = () => {
                     password:password
                 },config))
                 .then((res) =>{
-                    token = res.data.token;
-                    console.log({"Eee hamar tokenwa ":token})
+                    userInfo = res.data;
+                    // console.log({"Eee hamar loggedIn userwa ":userInfo})
+                    localStorage.setItem("userInfo", JSON.stringify(userInfo));
                     // cookies.set('jwtoken', token);
                 });
                 
                 history.push('/');
             } catch (error) {
                 console.log("error occure while login")
-                // history.push('/auth');
+                history.push('/auth');
             }
         }
     }

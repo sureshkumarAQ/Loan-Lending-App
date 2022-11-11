@@ -61,3 +61,62 @@ exports.fetchAllChats = async(req,res)=>{
         res.status(500).send({"error occure":error})
     }
 }
+
+exports.sendMessage = async(req,res)=>{
+
+    // Sender : LoggedIn user
+    // Content : Actual message
+    // Chat : chatid from which chat this message is belongs to
+    console.log(req.body)
+    const {content,chat} = req.body;
+
+    if(!content || !chat)
+    {
+        res.status(400).send("Invalid data passed")
+    }
+
+    let newMessage = {
+        sender:req.user._id,
+        content:content,
+        chat:chat
+    }
+
+    console.log(newMessage)
+
+    try {
+        
+        // Create new message
+        let message = await Message.create(newMessage);
+
+        // Populate message by sender
+        message = await message.populate("sender","-password");
+        // populate message by chat also
+        message = await message.populate("chat");
+        // Populate user inside chat also
+        message = await User.populate(message,{
+            path:"chat.users",
+            select:"-password"
+        })
+
+        // Update letest message
+        await Chat.findByIdAndUpdate(chat,{
+            letestMessage:message
+        });
+
+        res.status(201).send(message)
+    } catch (error) {
+        res.status(500).send({"error occure":error})
+    }
+}
+
+exports.allMessage=async(req,res)=>{
+    try {
+        const message =await Message.find({chat:req.params.chatId})
+        .populate("sender","name email")
+        .populate("chat")
+
+        res.status(200).send(message)
+    } catch (error) {
+        res.status(400).send({"error occure":error})
+    }
+}

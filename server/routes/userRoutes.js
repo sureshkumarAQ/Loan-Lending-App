@@ -31,5 +31,6 @@ route.post(
 
 //GET routes
 route.get("/:userID",auth,controller.getUserProfile)
+route.get("/",auth,controller.searchUser);
 
 module.exports = route;
