@@ -7,6 +7,7 @@ const route = express.Router();
 const cookieParser = require("cookie-parser")
 
 const connectDB = require("./server/database/connection.js");
+// const { Socket } = require("socket.io");
 
 const app = express();
 // app.use(cors());
@@ -39,6 +40,26 @@ app.use("/user", require("./server/routes/userRoutes.js"));
 app.use("/loan", require("./server/routes/loanRoutes.js"));
 app.use("/chat", require("./server/routes/chatRoutes.js"));
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+const io = require('socket.io')(server,{
+  pingTimeout:60000,// The amount of time it will take while being inactive
+  cors:{
+    origin:`http://localhost:${PORT}`,
+  }
+});
+
+// Build connection
+io.on("connection",(socket)=>{
+  console.log("connected to socket io")
+
+  // connect to personal socket
+  socket.on('setup',(userData)=>{
+    console.log({"user data inside personal socket ":userData})
+    socket.join(userData);
+    socket.emit("connected")
+  })
+}); 
+

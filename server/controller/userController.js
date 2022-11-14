@@ -10,7 +10,7 @@ const { findOne } = require("../models/userModels");
       res.status(400).send({ message: "Content can not be empty" });
       return;
     }
-    console.log(req.body)
+    // console.log(req.body)
   
     // Calculating initial loan eliginle criteria score(lecs)
   
@@ -18,7 +18,9 @@ const { findOne } = require("../models/userModels");
     const user = new User({
       name: req.body.name,
       password: req.body.password,
-      email: req.body.email
+      email: req.body.email,
+      ctc: req.body.ctc,
+      age: req.body.age,
     });
     // zwt create a new tokken
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);

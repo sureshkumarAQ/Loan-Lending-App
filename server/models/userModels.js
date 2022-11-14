@@ -17,7 +17,8 @@ const userSchema = new Schema({
   },
   ctc: {
     type: Number,
-    default:null
+    default:null,
+    required:true
   },
   bankname: {
     type: String,
@@ -33,7 +34,8 @@ const userSchema = new Schema({
   },
   age: {
     type: Number,
-    default:null
+    default:null,
+    required:true
   },
   loantaken: {
     type: Number,
@@ -49,7 +51,7 @@ const userSchema = new Schema({
   },
   maxLoanAmount: {
     type: Number,
-    default: 0,
+    default: 10000,
   },
 });
 

@@ -9,6 +9,8 @@ const Signup = () => {
     const toast = useToast()
     const [name, setname] = useState()
     const [email, setemail] = useState()
+    const [ctc, setctc] = useState()
+    const [age, setage] = useState()
     const [password, setpassword] = useState()
     const [show, setshow] = useState(false)
     function showHide(){
@@ -18,7 +20,7 @@ const Signup = () => {
 
 
     const submitHandler = ()=>{
-        if(!email || !password || !name)
+        if(!email || !password || !name || !ctc || !age)
         {
             toast({
                 title: 'Please fill all the details',
@@ -41,20 +43,29 @@ const Signup = () => {
                 .post(`/user/signup`, new URLSearchParams({
                     email:email,
                     name:name,
-                    password:password
+                    password:password,
+                    ctc:ctc,
+                    age:age
                 },config))
-                .then((res) => res.send(res.data));
-
+                .then((res) =>{
+                    toast({
+                        title: "Registration Successful",
+                        status: "success",
+                        duration: 3000,
+                        isClosable: true,
+                        position: "top",
+                    });
+                    history.push('/');
+                });
+            } catch (error) {
                 toast({
-                    title: "Registration Successful",
-                    status: "success",
-                    duration: 5000,
+                    title: "Error occure while registration",
+                    status: "error",
+                    duration: 3000,
                     isClosable: true,
                     position: "top",
                 });
-                history.push('/');
-            } catch (error) {
-                console.log("error occure while signup")
+                history.push('/auth');
             }
         }
        
@@ -99,6 +110,26 @@ const Signup = () => {
             </Button>
             </InputRightElement>
            </InputGroup>
+        </FormControl>
+
+        <FormControl id='ctc' isRequired>
+            <FormLabel>
+                CTC
+            </FormLabel>
+            <Input
+                placeholder='Enter Your CTC'
+                onChange={(e)=>setctc(e.target.value)}
+            />
+        </FormControl>
+
+        <FormControl id='age' isRequired>
+            <FormLabel>
+                Age
+            </FormLabel>
+            <Input
+                placeholder='Enter Your Age'
+                onChange={(e)=>setage(e.target.value)}
+            />
         </FormControl>
         <Button 
         colorScheme={'orange'}

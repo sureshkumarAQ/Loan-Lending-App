@@ -8,12 +8,18 @@ import axios from "axios";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { ChatState } from "../context/ChatProvider";
 import ProfileModal from "./ProfileModal";
+import ScrollableChat from "./ScrollableChat";
+import {io} from 'socket.io-client'
 
+
+const ENDPOINT = "http://localhost:3000"
+var socket,selectedChatCompare
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage,setNewMessage] = useState("")
+  const [socketConnected,setsocketConnected] = useState(false)
   const [istyping,setIstyping] = useState()
   const toast = useToast(false);
 
@@ -82,12 +88,18 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const typingHandler = (e)=>{
     setNewMessage(e.target.value)
   }  
-
+ 
   useEffect(() => {
     fetchMessage()
   }, [selectedChat])
+  useEffect(() => {
+    socket = io(ENDPOINT,{ transports: ['websocket', 'polling', 'flashsocket'] })
+    socket.emit("setup",user);
+    socket.on("connection",()=>{
+      setsocketConnected(true)
+    })
+  }, [])
   
-
   return (
     <>
       {selectedChat ? (
@@ -113,38 +125,36 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               </>
           </Text>
           <Box
-          d="flex"
-          flexDir="column"
-          justifyContent="flex-end"
-          p={3}
-          bg="#E8E8E8"
-          w="100%"
-          h="100%"
-          borderRadius="lg"
-          overflowY="hidden">
+            display="flex"
+            flexDir="column"
+            justifyContent="flex-end"
+            p={3}
+            bg="#E8E8E8"
+            w="100%"
+            h="100%"
+            borderRadius="lg"
+            overflowY="hidden">
 
-          {
-            loading ?(
-              <Spinner
-              size="xl"
-              w={20}
-              h={20}
-              alignSelf="center"
-              margin="auto"
-              />
-            ):(
-              <div>
-              {/* Hello */}
-              </div>
-            )
-          }
+            {
+              loading ?(
+                <Spinner
+                size="xl"
+                w={20}
+                h={20}
+                alignSelf="center"
+                margin="auto"
+                />
+              ):(
+                <div>
+                  <ScrollableChat messages={messages}/>
+                </div>
+              )
+            }
           <FormControl
               onKeyDown={sendMessage}
               id="first-name"
               isRequired
               mt={3}
-
-
             >
               {!istyping ? (
                 <div>
@@ -166,7 +176,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 onChange={typingHandler}
               />
             </FormControl>
-
           </Box>
         </>
       ) : (
