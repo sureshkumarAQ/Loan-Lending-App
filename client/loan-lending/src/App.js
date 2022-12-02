@@ -14,6 +14,8 @@ function App() {
       <Route path='/auth' component={Auth}/>
       <Route path='/modify' component={Modify}/>
       <Route path='/chats' component={ChatPage}/>
+      <Route path='/home' component={Home}/>
+      <Route path='/profile' component={Profile}/>
     </div>
   );
 }

@@ -12,7 +12,30 @@ const { findOne } = require("../models/userModels");
     }
     // console.log(req.body)
   
-    // Calculating initial loan eliginle criteria score(lecs)
+ // Calculating initial loan eliginle criteria cibil
+    let ageScore, ctcScore, loanScore;
+    if (req.body.age > 75 || req.body.age < 25) {
+      ageScore = 0;
+    } else {
+      ageScore = 100 - (req.body.age - 25) * 2;
+    }
+
+    if (req.body.ctc > 240000) {
+      ctcScore = 100;
+    } else if (req.body.ctc < 48000) {
+      ctcScore = 0;
+    } else {
+      ctcScore = ((req.body.ctc - 48000) * 2) / 48000;
+    }
+
+    loanScore = 10;
+    const initialCibilScore= 300 + ageScore + ctcScore + loanScore;
+    initialCibilScore.toFixed(2);
+
+    // Calculating initial maximum loan eligible amount
+
+    const initialMaxLoan = (240000 / 400) * (ageScore + ctcScore + loanScore);
+    initialMaxLoan.toFixed(2);
   
     // Store all data in user object
     const user = new User({
@@ -21,6 +44,8 @@ const { findOne } = require("../models/userModels");
       email: req.body.email,
       ctc: req.body.ctc,
       age: req.body.age,
+      cibilScore:initialCibilScore,
+      maxLoanAmount:initialMaxLoan
     });
     // zwt create a new tokken
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
@@ -93,7 +118,8 @@ const { findOne } = require("../models/userModels");
     
     try {
       const user = req.user;// LogedIn User
-      const id = req.params.userID; // Id of the user which we want to access profile
+      // const id = req.params.userID; // Id of the user which we want to access profile
+      const id = user._id;
       if(!id)
       {
         res.status(404).send("ID Not Found")

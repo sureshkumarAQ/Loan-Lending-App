@@ -43,7 +43,7 @@ const Apply = () => {
                     position: "top",
                     colorScheme:"orange"
                 });
-                history.push('/');
+                history.push('/home');
             });
            
         } catch (error) {

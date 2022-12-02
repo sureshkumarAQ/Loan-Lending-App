@@ -50,7 +50,7 @@ const Login = () => {
                     // cookies.set('jwtoken', token);
                 });
                 
-                history.push('/');
+                history.push('/home');
             } catch (error) {
                 console.log("error occure while login")
                 history.push('/auth');

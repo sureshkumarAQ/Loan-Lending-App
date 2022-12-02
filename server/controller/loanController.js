@@ -177,4 +177,25 @@ exports.getOneLoan = async(req,res)=>{
     res.status(500).send("Some error");
   }
 }
+exports.getAllLoanRequest= async(req,res)=>{
+  try {
+    await Loan.find({ acceptanace: false })
+      .select("-__v")
+      .populate("userWhoApplyForLoan", ["name", "cibilScore", "maxLoanAmount","email"])
+      .then((loan) => {
+        res.status(200).send(loan);
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occurred while creating a create operation",
+        });
+      });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+
+}
+
 

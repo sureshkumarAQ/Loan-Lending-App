@@ -55,7 +55,7 @@ const Signup = () => {
                         isClosable: true,
                         position: "top",
                     });
-                    history.push('/');
+                    history.push('/home');
                 });
             } catch (error) {
                 toast({

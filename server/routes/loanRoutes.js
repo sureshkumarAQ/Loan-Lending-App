@@ -9,5 +9,6 @@ route.post("/modify/:loanID", auth, controller.modifyLoan);
 route.post("/acceptModifiedLoan/:loanID",auth,controller.acceptModifiedLoanRequest);
 
 route.get('/oneloan/:loanID',auth,controller.getOneLoan);
+route.get('/getloans',controller.getAllLoanRequest);
 
 module.exports = route;

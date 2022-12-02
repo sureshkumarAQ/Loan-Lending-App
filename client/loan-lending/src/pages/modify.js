@@ -56,7 +56,7 @@ const Modify = () => {
                     position: "top",
                     color:"orange"
                 });
-                history.push('/');
+                history.push('/home');
             });
            
         } catch (error) {
